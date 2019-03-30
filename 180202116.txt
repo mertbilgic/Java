@@ -1,0 +1,1391 @@
+
+import java.util.Scanner;
+
+public class GezginRobotlar extends Robot{
+    static int engel=0;
+    static int  x2=0,y2=0,ilkx,ilky,c=0;
+    static int birim=0;
+    static int[] x1= new int[20];// engellerin kordinatlarý
+    static int[] y1= new int[20];
+    static int engel_sayisi=0;
+    private int gezinme_hizi;
+    static int[][] izgara = new int[30][30];
+
+    public GezginRobotlar(int motor_sayisi, int yük_miktari, String robot_tipi,int gezinme_hýzý) {
+        super(motor_sayisi, yük_miktari, robot_tipi);
+        this.gezinme_hizi=gezinme_hýzý;
+    }
+
+    public int getGezinme_hýzý() {
+        return gezinme_hizi;
+    }
+
+    public void setGezinme_hizi(int gezinme_hizi) {
+        this.gezinme_hizi = gezinme_hizi;
+    }
+    //*******************************************************************************************************************************************************************
+        public double EngeldenGecmeSüresiniBul(){
+        double sure;
+        if(getRobot_tipi().equals("Tekerlekli")){
+            sure=RobotOlustur.motor_sayi*(0.5);
+            System.out.println("Engeli aþma süresi:"+sure);
+            return sure;
+            
+        }
+        else if(getRobot_tipi().equals("Paletli")){
+            sure=RobotOlustur.motor_sayi*3;
+            System.out.println("Engeli aþma süresi:"+sure);
+            return sure;
+        }
+        else return 0;
+        }
+    //*******************************************************************************************************************************************************************
+      
+        public static void IzgaraHaraketleri(){
+           //30 olmasýnýn sebebi eðer kullanýcý izgara dýþýna çýkarsa ve kontroller sýrasýnda olmayan yere eriþim saðlanýrsa java hata vermesin diye
+          
+           
+            
+            Scanner scanner=new Scanner(System.in);
+            System.out.print("Kaç engel gireceksiniz");
+            int engel_s=scanner.nextInt();
+            for(int i=0;i<engel_s;i++){
+                engel_sayisi=engel_s;
+                System.out.print("x koridinatýný giriniz:");
+                x1[i]= scanner.nextInt();
+                System.out.print("y kordinatýný giriniz:");
+                y1[i]= scanner.nextInt();
+                izgara[x1[i]][y1[i]]=1;
+                System.out.println("izgara:"+izgara[x1[i]][y1[i]]);
+            }
+            System.out.print("Robotun baslangic kordinatýný giriniz:(x / y)");
+            x2=scanner.nextInt();
+            y2=scanner.nextInt();
+            
+            ilkx=x2;
+            ilky=y2;
+            
+            while(true){
+                System.out.print("Birimi giriniz:(Çýkýþ için 0 a basýnýz)");
+                int temp=scanner.nextInt();
+                scanner.nextLine();
+                birim+=temp;
+                if(temp==0){
+                    break;
+                }
+                System.out.print("Yönü giriniz:(sag/sol/ileri/geri)");
+                String yön = scanner.nextLine();               
+                if(yön.equals("sag")){
+                    for(;temp>0;temp--){
+                        if(izgara[x2][y2]==1){
+                             if(getRobot_tipi().equals("Spider")){
+                                System.out.println("Spider robot engel geçemez engele takýldýnýz");
+                                c++;
+                                x2-=1;
+                                break;
+                                
+                            }
+                            engel++;
+                            
+                         }
+                        x2+=1;
+                        if(x2>20){
+                        System.out.println("Dýþarý çýktýnýz!!!!!!!!!!!!!!!!!!!");
+                        break;
+                }
+                    }
+                }
+                else if(yön.equals("sol")){
+                    for(;temp>0;temp--){
+                        if(izgara[x2][y2]==1){
+                             if(getRobot_tipi().equals("Spider")){
+                                System.out.println("Spider robot engel geçemez engele takýldýnýz");
+                                c++;
+                                x2+=1;
+                                break;
+                                
+                            }
+                            engel++;
+                        }
+                     
+                        x2-=1;
+                           if(x2<0){
+                    System.out.println("Dýþarý çýktýnýz!!!!!!!!!!!!!!!!!!!");
+                    break;
+                    }
+                    }    
+                }
+                
+                else if(yön.equals("ileri")){
+                    for(;temp>0;temp--){
+                        if(izgara[x2][y2]==1){
+                            if(getRobot_tipi().equals("Spider")){
+                                System.out.println("Spider robot engel geçemez engele takýldýnýz");
+                                c++;
+                                y2-=1;
+                                break;
+                            }
+                            engel++;
+                        }
+                        y2+=1;
+                     if(y2>20){
+                    System.out.println("Dýþarý çýktýnýz!!!!!!!!!!!!!!!!!!!!!");
+                    break;
+                }
+                    }    
+                }
+                else if(yön.equals("geri")){
+                    for(;temp>0;temp--){
+                        if(izgara[x2][y2]==1){
+                            if(getRobot_tipi().equals("Spider")){
+                                System.out.println("Spider robot engel geçemez engele takýldýnýz");
+                                c++;
+                                y2+=1;
+                                break;
+                            }
+                           engel++;
+                        }
+                        y2-=1;
+                          if(y2<0){
+                    System.out.println("Dýþarý çýktýnýz!!!!!!!!!!!!!!!!!!!!!");
+                    break;
+                }
+                     }
+                }
+                if(c>0){
+                    break;
+                }
+                
+            }
+            
+            System.out.println("Engel sayisi:"+engel);
+        }
+        //*******************************************************************************************************************************************************************
+       
+        
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+public interface GezmeyenRobotlar {
+    
+    public int getYük_tasýma_kapsitesi();
+    public void setYük_tasýma_kapsitesi(int yük_taþýma_kapsitesi);
+    public void  setKol_uzunluðu(int kol_uzunluðuu);
+    public  int getYük_tasýma_hýzý();
+    public void setYük_tasýma_hýzý(int yük_taþýma_hýzý);
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+import java.util.Scanner;
+
+public class HibritRobot extends GezginRobotlar implements GezmeyenRobotlar {
+    private int haraket_parcasi;
+    private int yük_tasýma_kapsitesi;
+    private static int kol_uzunluðu;
+    private int sabitlenme_suresi;
+    private int gecis_suresi;
+    private int yük_tasýma_hýzý;
+    static int a1 ,a2,brm=0;
+    static double birimi;
+  //******************************************************************************************************************************************************  
+    public HibritRobot(int motor_sayisi, int yük_miktari, String robot_tipi, int gezinme_hýzý,int haraket_parcasi,int yük_tasýma_kapsitesi,int kol_uzunluguu,int yük_tasýma_hýzý,int sabitlenme_suresi,int gecis_suresi) {
+        super(motor_sayisi, yük_miktari, robot_tipi, gezinme_hýzý);
+        this.haraket_parcasi=haraket_parcasi;
+        this.yük_tasýma_kapsitesi=yük_tasýma_kapsitesi;
+        kol_uzunluðu=kol_uzunluguu;
+        this.yük_tasýma_hýzý=yük_tasýma_hýzý;
+        this.gecis_suresi=gecis_suresi;
+        this.sabitlenme_suresi=sabitlenme_suresi;
+    }
+//******************************************************************************************************************************************************
+    @Override
+    public int getYük_tasýma_kapsitesi() {
+        return yük_tasýma_kapsitesi;
+    }
+
+    @Override
+    public void setYük_tasýma_kapsitesi(int yük_taþýma_kapsitesi) {
+        this.yük_tasýma_kapsitesi = yük_taþýma_kapsitesi;
+    }
+
+    public static int getKol_uzunluðu() {
+        return kol_uzunluðu;
+    }
+
+    @Override
+    public void setKol_uzunluðu(int kol_uzunluðu) {
+        HibritRobot.kol_uzunluðu = kol_uzunluðu;
+    }
+
+    @Override
+    public int getYük_tasýma_hýzý() {
+        return yük_tasýma_hýzý;
+    }
+
+    @Override
+    public void setYük_tasýma_hýzý(int yük_tasýma_hýzý) {
+        this.yük_tasýma_hýzý = yük_tasýma_hýzý;
+    }
+    
+    public int getHaraket_parcasi() {
+        return haraket_parcasi;
+    }
+
+    public void setHaraket_parcasi(int haraket_parcasi) {
+        this.haraket_parcasi = haraket_parcasi;
+    }
+
+    public int getSabitlenme_suresi() {
+        return sabitlenme_suresi;
+    }
+
+    public void setSabitlenme_suresi(int sabitlenme_suresi) {
+        this.sabitlenme_suresi = sabitlenme_suresi;
+    }
+
+    public int getGecis_suresi() {
+        return gecis_suresi;
+    }
+
+    public void setGecis_suresi(int gecis_suresi) {
+        this.gecis_suresi = gecis_suresi;
+    }
+    //******************************************************************************************************************************************************
+        public static void uzaklýkKontrol(){
+       
+            Scanner scanner=new Scanner(System.in);
+                
+            a1=x2;
+            a2=y2;
+      
+         
+            
+              
+                    while(true){
+                System.out.print("Koymak istediðiniz uzaklýðý girin:(Çýkýþ için 0 a basýnýz)");
+                int temp=scanner.nextInt();
+                scanner.nextLine();
+                brm+=temp;
+                 
+                if(temp==0){
+                    break;
+                }
+                System.out.print("Yönü giriniz(sað/sol/ileri/geri");
+                String yön = scanner.nextLine();             
+                if(yön.equals("sag")){
+                    if(temp<=getKol_uzunluðu()){
+                        a1+=temp;
+                    }
+                        
+                }
+                else if(yön.equals("sol")){
+                    if(temp<=getKol_uzunluðu()){
+                        a1-=temp;
+                    }
+                    else{
+                        System.out.println("Kol uzunlugunuz yetersiz");
+                    }
+                    
+                   
+                }
+                else if(yön.equals("ileri")){
+                      if(temp<=getKol_uzunluðu()){
+                        a2+=temp;
+                    }
+                    else{
+                        System.out.println("Kol uzunlugunuz yetersiz");
+                    }
+                  
+                }
+                else if(yön.equals("geri")){
+                       if(temp<=getKol_uzunluðu()){
+                        a2-=temp;
+                    }
+                    else{
+                        System.out.println("Kol uzunlugunuz yetersiz");
+                    }
+              
+                }
+                
+              
+                
+            }
+                    
+                 double x2=(ilkx-a1);
+          double y2=(ilky-a2);
+          x2=Math.abs(x2);
+          y2=Math.abs(y2);
+          double c=Math.pow(x2,2);
+          double d=Math.pow(y2,2);
+         birimi=Math.sqrt(c+d);
+         
+         if(birimi>RobotOlustur.kol_uzunluk){
+             System.out.println("Kol uzunluðunu aþtýnýzzzz!!!!!!!!");
+             a1=ilkx;
+             a2=ilky;
+         }
+     
+    }
+}
+    
+    
+    
+    
+
+
+import java.util.Scanner;
+
+public class ManipülatörRobotlar extends Robot implements GezmeyenRobotlar{
+    //yük taþýma kapasitesi, kol uzunluðu, taþýma hýzý 
+    private int yük_tasýma_kapsitesi;
+    private static int kol_uzunluðu;
+    private int yük_tasýma_hýzý;
+    static int x1,y1,ilkx,ilky;
+    static double birim,uzunluk;
+
+    public ManipülatörRobotlar(int motor_sayisi, int yük_miktari, String robot_tipi, int yük_taþýma_kapsitesi,int kol_uzunluðuu,int yük_tasýma_hýzý) {
+        super(motor_sayisi, yük_miktari, robot_tipi);
+        this.yük_tasýma_kapsitesi=yük_taþýma_kapsitesi;
+        kol_uzunluðu=kol_uzunluðuu;
+        this.yük_tasýma_hýzý=yük_tasýma_hýzý;
+    }
+
+    @Override
+    public int getYük_tasýma_kapsitesi() {
+        return yük_tasýma_kapsitesi;
+    }
+
+    @Override
+    public void setYük_tasýma_kapsitesi(int yük_tasýma_kapsitesi) {
+        this.yük_tasýma_kapsitesi = yük_tasýma_kapsitesi;
+    }
+
+    public static int  getKol_uzunluðu() {
+        return kol_uzunluðu;
+    }
+
+    @Override
+    public void  setKol_uzunluðu(int kol_uzunluðuu) {
+        kol_uzunluðu = kol_uzunluðuu;
+    }
+
+    @Override
+    public  int getYük_tasýma_hýzý() {
+        return yük_tasýma_hýzý;
+    }
+
+    @Override
+    public void setYük_tasýma_hýzý(int yük_taþýma_hýzý) {
+        this.yük_tasýma_hýzý = yük_taþýma_hýzý;
+    }
+    
+    
+    //******************************************************************************************************************************************************
+    public static void uzaklýkKontrol(){
+       
+            Scanner scanner=new Scanner(System.in);
+       
+            System.out.print("Robotun baslangic kordinatýný giriniz:(x / y)");
+            x1=scanner.nextInt();
+            y1=scanner.nextInt();
+            ilkx=x1;
+            ilky=y1;
+            
+               
+                
+                    while(true){
+                System.out.print("Koymak istediðiniz uzaklýðý girin:(Çýkýþ için 0 a basýnýz)");
+                int temp=scanner.nextInt();
+                scanner.nextLine();
+                if(temp>RobotOlustur.kol_uzunluk){
+                    System.out.print("Kol uzunluðu yetersiz!!!!!!!!!!!");
+                }
+                else{
+                 
+                if(temp==0){
+                    break;
+                }
+                System.out.print("Yönü giriniz:(sað/sol/ileri/geri)");
+                String yön = scanner.nextLine();             
+                if(yön.equals("sag")){
+                   
+                      if(x1<=getKol_uzunluðu()){
+                        x1+=temp;
+                    }
+                      else{
+                          System.out.println("Kol uzunlugunun dýþýna çýktýnýz");
+                      }
+                }
+                else if(yön.equals("sol")){
+                     if(x1<=getKol_uzunluðu()){
+                        x1-=temp;
+                    }
+                      else{
+                          System.out.println("Kol uzunlugunun dýþýna çýktýnýz");
+                      }    
+                }
+                else if(yön.equals("ileri")){
+                    if(y1<=getKol_uzunluðu()){
+                        y1+=temp;
+                    }
+                      else{
+                          System.out.println("Kol uzunlugunun dýþýna çýktýnýz");
+                      }    
+                }
+                else if(yön.equals("geri")){
+                    if(y1<=getKol_uzunluðu()){
+                        y1-=temp;
+                    }
+                      else{
+                          System.out.println("Kol uzunlugunun dýþýna çýktýnýz");
+                      }
+                }  
+            }
+                }
+      
+          double x2=(ilkx-x1);
+          double y2=(ilky-y1);
+          x2=Math.abs(x2);
+          y2=Math.abs(y2);
+          double c=Math.pow(x2,2);
+          double d=Math.pow(y2,2);
+         birim=Math.sqrt(c+d);
+         
+         if(birim>RobotOlustur.kol_uzunluk){
+             System.out.println("Kol uzunluðunu aþtýnýzzzz!!!!!!!!");
+             x1=ilkx;
+             y1=ilky;
+         }
+    }
+}
+
+
+    public class PaletliRobot extends GezginRobotlar{
+        private int palet_sayisi;
+        public PaletliRobot(int motor_sayisi, int yük_miktari, String robot_tipi, int gezinme_hýzý,int palet_sayisi) {
+            super(motor_sayisi, yük_miktari, robot_tipi, gezinme_hýzý);
+            this.palet_sayisi=palet_sayisi;
+        }
+
+        public int getPalet_sayisi() {
+            return palet_sayisi;
+        }
+
+        public void setPalet_sayisi(int palet_sayisi) {
+            this.palet_sayisi = palet_sayisi;
+        }
+    }
+
+
+
+public class ParalelRobot extends ManipülatörRobotlar{
+    
+    public ParalelRobot(int motor_sayisi, int yük_miktari, String robot_tipi, int yük_taþýma_kapsitesi, int kol_uzunluðu, int yük_taþýma_hýzý) {
+        super(motor_sayisi, yük_miktari, robot_tipi, yük_taþýma_kapsitesi, kol_uzunluðu, yük_taþýma_hýzý);
+    }
+    
+}
+
+
+
+import java.awt.HeadlessException;
+import javax.swing.JFrame;
+
+
+
+public class Prolab3 {
+    
+    
+    public static void main(String[] args) {
+      grafikekrani grafik = new grafikekrani();
+    //  Prolab3 ekran = new Prolab3("Grafik Kullanýmý");
+      RobotOlustur a = new  RobotOlustur();
+        JFrame ekran=new JFrame();
+     //************************************************************************************************************************************************************************
+    if("Gezgin".equals(RobotOlustur.robot_tip)){
+        if(RobotOlustur.robot_tür.equals("Tekerlekli")){
+            TekerlekliRobot tekerli =new TekerlekliRobot(RobotOlustur.motor_sayi,RobotOlustur.yük_miktar,RobotOlustur.robot_tür,RobotOlustur.gezinme_hýz,RobotOlustur.haraket_parca);
+            double engelsuresi=tekerli.EngeldenGecmeSüresiniBul();
+            TekerlekliRobot.IzgaraHaraketleri();
+            double zaman=(double)(TekerlekliRobot.birim*10)/(double)RobotOlustur.gezinme_hýz;
+            zaman=(double)(engelsuresi*TekerlekliRobot.engel)+zaman;
+            System.out.println("Geçen zaman:"+zaman);
+            System.out.println("Ýlk konum x:"+GezginRobotlar.ilkx+" y:"+GezginRobotlar.ilky);
+            System.out.println("Son konum x:"+GezginRobotlar.x2+" y:"+GezginRobotlar.y2);
+          
+        }
+        else if(RobotOlustur.robot_tür.equals("Paletli")){
+            PaletliRobot tekerli =new PaletliRobot(RobotOlustur.motor_sayi,RobotOlustur.yük_miktar,RobotOlustur.robot_tür,RobotOlustur.gezinme_hýz,RobotOlustur.haraket_parca);
+            double engel= tekerli.EngeldenGecmeSüresiniBul();
+            PaletliRobot.IzgaraHaraketleri();
+            double zaman=(double)(PaletliRobot.birim*10)/(double)RobotOlustur.gezinme_hýz;
+            zaman=(double)(engel*PaletliRobot.engel)+zaman;
+            System.out.println("Geçen zaman:"+zaman);
+            System.out.println("Ýlk konum x:"+GezginRobotlar.ilkx+" y:"+GezginRobotlar.ilky);
+            System.out.println("Son konum x:"+GezginRobotlar.x2+" y:"+GezginRobotlar.y2);
+            
+        }
+        else if(RobotOlustur.robot_tür.equals("Spider")){
+            SpiderRobot spider =new SpiderRobot(RobotOlustur.motor_sayi,RobotOlustur.yük_miktar,RobotOlustur.robot_tür,RobotOlustur.gezinme_hýz,RobotOlustur.haraket_parca);
+            SpiderRobot.IzgaraHaraketleri();
+            double zaman=(double)(SpiderRobot.birim*10)/(double)RobotOlustur.gezinme_hýz;
+            System.out.println("Geçen zaman:"+zaman);
+            System.out.println("Ýlk konum x:"+GezginRobotlar.ilkx+" y:"+GezginRobotlar.ilky);
+            System.out.println("Son konum x:"+GezginRobotlar.x2+" y:"+GezginRobotlar.y2);
+            
+            
+        }
+        System.out.println(
+                "Robot tipi: "+RobotOlustur.robot_tip+
+                "\nMotor sayisi: "+RobotOlustur.motor_sayi+
+                "\nYük Miktari: "+RobotOlustur.yük_miktar+
+                "\nGezinme Hýzý: "+RobotOlustur.gezinme_hýz+
+                "\nHareket parcasi: "+RobotOlustur.haraket_parca);
+        grafik.ilk_konum(GezginRobotlar.ilkx,GezginRobotlar.ilky);
+        grafik.son_konum(GezginRobotlar.x2,GezginRobotlar.y2);
+        grafik.engel_ekle(GezginRobotlar.x1,GezginRobotlar.y1,GezginRobotlar.engel_sayisi);
+          
+        
+    }
+    //************************************************************************************************************************************************************************
+    else if("Gezmeyen".equals(RobotOlustur.robot_tip)){
+        //(int motor_sayisi, int yük_miktari, String robot_tipi, int yük_taþýma_kapsitesi,int kol_uzunluðu,int yük_taþýma_hýzý)
+          if(RobotOlustur.robot_tür.equals("Seri")){
+            SeriRobot seri =new SeriRobot(RobotOlustur.motor_sayi,RobotOlustur.yük_miktar,RobotOlustur.robot_tip,RobotOlustur.yük_tasýma_kapiste,RobotOlustur.kol_uzunluk,RobotOlustur.tasýma_hýz);
+            SeriRobot.uzaklýkKontrol();
+            double zaman=(SeriRobot.birim*10)/RobotOlustur.tasýma_hýz;
+            System.out.println("Geçen zaman:"+zaman);
+            System.out.println("Ýlk konum x:"+ManipülatörRobotlar.ilkx+" y:"+ManipülatörRobotlar.ilky);
+            System.out.println("Son konum x:"+ManipülatörRobotlar.x1+" y:"+ManipülatörRobotlar.y1);
+        }
+         else if(RobotOlustur.robot_tür.equals("Paralel")){
+            ParalelRobot paralel =new ParalelRobot(RobotOlustur.motor_sayi,RobotOlustur.yük_miktar,RobotOlustur.robot_tip,RobotOlustur.yük_tasýma_kapiste,RobotOlustur.kol_uzunluk,RobotOlustur.tasýma_hýz);
+            ParalelRobot.uzaklýkKontrol();
+            double zaman=(ParalelRobot.birim*10)/RobotOlustur.tasýma_hýz;
+            System.out.println("Geçen zaman:"+zaman);
+            System.out.println("Ýlk konum x:"+ManipülatörRobotlar.ilkx+" y:"+ManipülatörRobotlar.ilky);
+            System.out.println("Son konum x:"+ManipülatörRobotlar.x1+" y:"+ManipülatörRobotlar.y1);
+        }
+          System.out.println(
+                "Robot tipi: "+RobotOlustur.robot_tip+
+                "\nMotor sayisi: "+RobotOlustur.motor_sayi+
+                "\n Yük Kapasitesi:"+RobotOlustur.yük_tasýma_kapiste+
+                "\nYük Miktari: "+RobotOlustur.yük_miktar+
+                "\nTaþýma Hýzý: "+RobotOlustur.tasýma_hýz+
+                "\nKol uzunluðu: "+RobotOlustur.kol_uzunluk);
+        grafik.ilk_konum(ManipülatörRobotlar.ilkx,ManipülatörRobotlar.ilky);
+        grafik.yuk_ekle(ManipülatörRobotlar.x1,ManipülatörRobotlar.y1);
+    }
+    //************************************************************************************************************************************************************************
+    if("Hibrit".equals(RobotOlustur.robot_tip)){
+        
+        HibritRobot hibrit = new HibritRobot(RobotOlustur.motor_sayi,RobotOlustur.yük_miktar,RobotOlustur.robot_tür,RobotOlustur.gezinme_hýz,RobotOlustur.haraket_parca,RobotOlustur.yük_tasýma_kapiste,RobotOlustur.kol_uzunluk,RobotOlustur.tasýma_hýz,RobotOlustur.sabitlenme_suresi,RobotOlustur.gecis_suresi);
+        System.out.println(
+                "Robot tipi: "+RobotOlustur.robot_tip+
+                "\nMotor sayisi: "+RobotOlustur.motor_sayi+
+                "\n Yük Kapasitesi:"+RobotOlustur.yük_tasýma_kapiste+
+                "\nYük Miktari: "+RobotOlustur.yük_miktar+
+                "\nTaþýma Hýzý: "+RobotOlustur.tasýma_hýz+
+                "\nKol uzunluðu: "+RobotOlustur.kol_uzunluk+
+                "\nGezinme Hýzý: "+RobotOlustur.gezinme_hýz+
+                "\nHareket parcasi: "+RobotOlustur.haraket_parca);
+        double engelsure=hibrit.EngeldenGecmeSüresiniBul();
+        HibritRobot.IzgaraHaraketleri();
+        HibritRobot.uzaklýkKontrol();
+        double zaman=(HibritRobot.birim*10)/RobotOlustur.gezinme_hýz;
+        zaman=(engelsure*HibritRobot.engel)+zaman+hibrit.getSabitlenme_suresi()+hibrit.getGecis_suresi();
+        zaman=(HibritRobot.birimi*10)/RobotOlustur.tasýma_hýz+zaman;
+        System.out.println("Sabitlenme Süresi:"+hibrit.getSabitlenme_suresi());
+        System.out.println("Geçiþ Süresi:"+hibrit.getGecis_suresi());
+        System.out.println("Geçen zaman:"+zaman);
+        System.out.println("Ýlk konum x:"+HibritRobot.ilkx+" y:"+HibritRobot.ilky);
+        System.out.println("Haraketsiz durumdaki konum x:"+HibritRobot.x2+" y:"+HibritRobot.y2);
+        System.out.println("Son konum x:"+HibritRobot.a1+ " y:"+HibritRobot.a2);
+        grafik.ilk_konum(HibritRobot.ilkx,HibritRobot.ilky);
+        grafik.son_konum(HibritRobot.x2,HibritRobot.y2);
+        grafik.yuk_ekle(HibritRobot.a1,HibritRobot.a2);
+        grafik.engel_ekle(HibritRobot.x1,HibritRobot.y1,GezginRobotlar.engel_sayisi);
+      
+    }
+      
+       /* grafik.ilk_konum(3,4);
+        grafik.son_konum(5,3);*/
+       
+        ekran.setVisible(true);
+        ekran.setResizable(false);
+        ekran.setSize(1000,700);
+        ekran.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        ekran.add(grafik); 
+}
+    
+}
+
+
+
+
+
+
+
+public class Robot {
+    private int motor_sayisi;
+    private int yük_miktari;
+    private static String robot_tipi;
+
+    public Robot(int motor_sayisi, int yük_miktari, String robot_tipi) {
+        this.motor_sayisi = motor_sayisi;
+        this.yük_miktari = yük_miktari;
+        this.robot_tipi = robot_tipi;
+    }
+
+    
+    public int getMotor_sayisi() {
+        return motor_sayisi;
+    }
+
+    public void setMotor_sayisi(int motor_sayisi) {
+        this.motor_sayisi = motor_sayisi;
+    }
+
+    public int getYük_miktari() {
+        return yük_miktari;
+    }
+
+    public void setYük_miktari(int yük_miktari) {
+        this.yük_miktari = yük_miktari;
+    }
+
+    public static String getRobot_tipi() {
+        return robot_tipi;
+    }
+
+    public void setRobot_tipi(String robot_tipi) {
+        this.robot_tipi = robot_tipi;
+    }
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import java.util.Scanner;
+
+public class RobotOlustur {
+    static int i,g_hýz;
+    static String robot_tip,robot_tür;
+    static int motor_sayi,secilen_robot,tasýma_hýz,kol_uzunluk,yük_tasýma_kapiste,haraket_parca,gezinme_hýz,yük_miktar;
+    static String hareketli[]= new String[20];
+    static String hareketsiz[]= new String[20];
+    static int sabitlenme_suresi;
+    static int gecis_suresi;
+    static int gezgin=0,gezmeyen=0,t=0,p=0,s=0,pl=0,se=0;;
+    public RobotOlustur() {
+       
+        int hýz_kontrolT=0,hýz_kontrolP=0,hýz_kontrolS=0,yük_kontrolS=0,yük_kontrolP=0;
+        String robot_tipi[]= new String[10];
+        String robot_türü[]= new String[10];
+        int motor_sayisi[]= new int[10];
+        int yuk_miktari[]= new int[10];
+        int gezinme_hizi[]= new int[10];
+        int hareket_parcasi[]= new int[10];
+        int yük_tasýma_kapasitesi[]= new int[10];
+        int kol_uzunlugu[]= new int[10];
+        int tasýma_hizi[]= new int[10];
+       
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.print("Kaç tane robot girmek istiyorsunuz:");
+        int robot_sayisi=scanner.nextInt();
+        scanner.nextLine();
+        System.out.println("********************************************************************");
+        System.out.println("Robot Tipi:Gezgin");
+        System.out.println("-Tekerlekli");
+        System.out.println("-Paletli");
+        System.out.println("-Spider");
+        System.out.println("********************************************************************");
+        System.out.println("Robot Tipi:Gezmeyen(Manipülatör)");
+        System.out.println("-Seri");
+        System.out.println("-Paralel");
+        System.out.println("********************************************************************");
+        for(i=0;i<robot_sayisi;i++){
+            System.out.print("Tanýmlacak Robot tipini giriniz:(Gezgin/Gezmeyen/Hibrit)");
+            robot_tipi[i]=scanner.nextLine();
+
+            if(robot_tipi[i].equals("Gezgin")){
+                 gezgin++;
+                System.out.print("Robot Türünü giriniz:(Tekerlekli/Paletli/Spider)");
+                robot_türü[i]=scanner.nextLine();
+                System.out.print("Motor sayýsýný giriniz:");
+            motor_sayisi[i]=scanner.nextInt();
+                
+                System.out.print("Yük miktarýný giriniz:");
+                yuk_miktari[i]=scanner.nextInt();
+                System.out.println(
+                                "\n Tekerlekli Robotun  Hýz Sýnýrý:21-30 arasý"+
+                                "\n Paletli Robotun  Hýz Sýnýrý:10-20 arasý"+
+                                "\n Spider Robotun  Hýz Sýnýrý:0-9 arasý\n"
+                        );
+                System.out.print("Gezinme hýzýný giriniz:");
+                gezinme_hizi[i]=scanner.nextInt();
+                scanner.nextLine();
+                if(robot_türü[i].equals("Tekerlekli")){
+                    t=i;
+                    if(gezinme_hizi[i]<20||gezinme_hizi[i]>30){
+                         while(true){
+                             if(gezinme_hizi[i]>20&&gezinme_hizi[i]<=30)break;  
+                        System.out.println("Geçerli gezinme hýzýný giriniz");
+                        gezinme_hizi[i]=scanner.nextInt();
+                        scanner.nextLine();
+                        } 
+                    }
+                }
+                else if(robot_türü[i].equals("Paletli")){
+                    p=i;
+                    if(gezinme_hizi[i]<10||gezinme_hizi[i]>20){
+                        while(true){
+                        if(gezinme_hizi[i]>10&&gezinme_hizi[i]<=20) break;
+                        System.out.println("Geçerli gezinme hýzýný giriniz");
+                        gezinme_hizi[i]=scanner.nextInt();
+                        scanner.nextLine();
+                        }
+                    }
+                }        
+                else if(robot_türü[i].equals("Spider")){
+                    s=i;
+                    if(gezinme_hizi[i]<0||gezinme_hizi[i]>=10){
+                         while(true){
+                             if(gezinme_hizi[i]>0&&gezinme_hizi[i]<10) break;
+                            System.out.println("Geçerli gezinme hýzýný giriniz");
+                            gezinme_hizi[i]=scanner.nextInt();
+                            scanner.nextLine();
+                          }
+                    }
+                }
+                  if(robot_türü[i].equals("Tekerlekli")){
+                    System.out.print("Teker sayisini giriniz:");
+                    hareket_parcasi[i]=scanner.nextInt();
+                    scanner.nextLine();}
+                    else if(robot_türü[i].equals("Paletli")){
+                    System.out.print("Palet sayisini giriniz:");
+                    hareket_parcasi[i]=scanner.nextInt();
+                    scanner.nextLine();}
+                 else if(robot_türü[i].equals("Spider")){
+                    System.out.print("Bacak sayisini giriniz:");
+                    hareket_parcasi[i]=scanner.nextInt();
+                    scanner.nextLine();
+                }   
+            }
+            else if(robot_tipi[i].equals("Gezmeyen")){
+                gezmeyen++;
+                 System.out.print("Robot Türünü giriniz:(Seri/Paralel)");
+                  robot_türü[i]=scanner.nextLine();
+                   System.out.print("Motor sayýsýný giriniz:");
+            motor_sayisi[i]=scanner.nextInt();
+                 System.out.print("Yük taþýma kapasitesini giriniz:");
+                 yük_tasýma_kapasitesi[i]=scanner.nextInt();
+                 if("Seri".equals(robot_türü[i])){
+                     se=i;
+                     yük_kontrolS=yük_tasýma_kapasitesi[i];
+                            if(yük_kontrolP!=0&&yük_kontrolS!=0){
+                    if(yük_kontrolP<=yük_kontrolS){
+                        yük_kontrolS=yukKontrol2(yük_kontrolP,yük_kontrolS);
+                        yük_tasýma_kapasitesi[i]=yük_kontrolS;
+                    } 
+                }
+                     
+                 }
+                 else if("Paralel".equals(robot_türü[i])){
+                     pl=i;
+                     yük_kontrolP=yük_tasýma_kapasitesi[i];
+                            if(yük_kontrolP!=0&&yük_kontrolS!=0){
+                    if(yük_kontrolP<=yük_kontrolS){
+                        yük_kontrolP=yukKontrol(yük_kontrolP,yük_kontrolS);
+                        yük_tasýma_kapasitesi[i]=yük_kontrolP;
+                    } 
+                            }   
+                 }
+                 System.out.print("Yük miktarýný giriniz:");
+                 yuk_miktari[i]=scanner.nextInt();
+
+                    if(yuk_miktari[i]>yük_tasýma_kapasitesi[i]){
+                        while(true){
+                        System.out.println("Geçerli yük miktarýný giriniz kapasiteyi aþtýnýz");
+                        yuk_miktari[i]=scanner.nextInt();
+                        if(yuk_miktari[i]<=yük_tasýma_kapasitesi[i]){
+                            break;
+                        }
+                            
+                        }
+                        }
+                 System.out.print("Kol uzunluðunu giriniz:");
+                 kol_uzunlugu[i]=scanner.nextInt();
+                 System.out.print("Taþýma hýzýný giriniz giriniz:");
+                 tasýma_hizi[i]=scanner.nextInt();
+                 scanner.nextLine();
+                   if(robot_türü[i].equals("Paralel")){
+                    hýz_kontrolP=tasýma_hizi[i];
+                       if(hýz_kontrolP!=0&&hýz_kontrolS!=0){
+                    if(hýz_kontrolP<=hýz_kontrolS){
+                       hýz_kontrolP=hýzKotnrol(hýz_kontrolP,hýz_kontrolS);
+                        tasýma_hizi[i]=hýz_kontrolP;
+                    } 
+                }
+                     }
+                else if(robot_türü[i].equals("Seri")){
+                    hýz_kontrolS=tasýma_hizi[i];
+                       if(hýz_kontrolP!=0&&hýz_kontrolS!=0){
+                    if(hýz_kontrolP<=hýz_kontrolS){
+                        hýz_kontrolS=hýzKotnrol2(hýz_kontrolP,hýz_kontrolS);
+                        tasýma_hizi[i]=hýz_kontrolS;
+                    } 
+                }
+                 
+                
+                }
+                      
+                     }
+            if(robot_tipi[i].equals("Hibrit")){
+                System.out.print("Hibrit robot için hareketli kýsmý:");
+                hareketli[i]=scanner.nextLine();
+                System.out.print("Hibrit robot için haraketsiz kýsmý:");
+                hareketsiz[i]=scanner.nextLine();
+                
+                
+                if(gezmeyen==0&&gezgin==0){
+                    System.out.print("Motor sayýsýný giriniz:");
+                    motor_sayisi[i]=scanner.nextInt();
+                    System.out.print("Yük taþýma kapasitesini giriniz:");
+                    yük_tasýma_kapasitesi[i]=scanner.nextInt();
+                    System.out.print("Yük miktarýný giriniz:");
+                    yuk_miktari[i]=scanner.nextInt();
+                       if(yuk_miktari[i]>yük_tasýma_kapasitesi[i]){
+                        while(true){
+                            System.out.println("Geçerli yük miktarýný giriniz kapasiteyi aþtýnýz");
+                            yuk_miktari[i]=scanner.nextInt();
+                            if(yuk_miktari[i]<=yük_tasýma_kapasitesi[i]){
+                                break;
+                            }      
+                        }
+                   }
+                    
+                    
+                    System.out.print("Kol uzunluðunu giriniz:");
+                    kol_uzunlugu[i]=scanner.nextInt();
+                    System.out.print("Sabitlenme süresini giriniz:");
+                    sabitlenme_suresi=scanner.nextInt();
+                    System.out.print("Yükü kola geçirme süresini giriniz:");
+                    gecis_suresi=scanner.nextInt();
+                    System.out.print("Taþýma hýzýný giriniz giriniz:");
+                    tasýma_hizi[i]=scanner.nextInt();
+                    scanner.nextLine();
+                       if(hareketli[i].equals("Paralel")){
+                        hýz_kontrolP=tasýma_hizi[i];
+                        if(hýz_kontrolP!=0&&hýz_kontrolS!=0){
+                           if(hýz_kontrolP<=hýz_kontrolS){
+                               hýz_kontrolP=hýzKotnrol(hýz_kontrolP,hýz_kontrolS);
+                               tasýma_hizi[i]=hýz_kontrolP;
+                            } 
+                         }
+                        }
+                    else if(hareketli[i].equals("Seri")){
+                        hýz_kontrolS=tasýma_hizi[i];
+                           if(hýz_kontrolP!=0&&hýz_kontrolS!=0){
+                                if(hýz_kontrolP<=hýz_kontrolS){
+                                    hýz_kontrolS=hýzKotnrol2(hýz_kontrolP,hýz_kontrolS);
+                                    tasýma_hizi[i]=hýz_kontrolS;
+                                } 
+                            }
+                     }
+
+                 
+                    System.out.print("Gezinme hýzýný giriniz:");
+                    gezinme_hizi[i]=scanner.nextInt();
+                    scanner.nextLine();
+                    if(hareketli[i].equals("Tekerlekli")){
+                             if(gezinme_hizi[i]<20||gezinme_hizi[i]>30){{
+                             while(true){
+                                 if(gezinme_hizi[i]>20&&gezinme_hizi[i]<=30)break;  
+                            System.out.println("Geçerli gezinme hýzýný giriniz(Hýz sýnýrý=30)");
+                            gezinme_hizi[i]=scanner.nextInt();
+                            scanner.nextLine();
+                        } 
+
+                        }
+
+                         }
+
+                    else if(hareketli[i].equals("Paletli")){
+                                            if(gezinme_hizi[i]<10||gezinme_hizi[i]>20){
+                            while(true){
+                            if(gezinme_hizi[i]>10&&gezinme_hizi[i]<=20) break;
+                            System.out.println("Geçerli gezinme hýzýný giriniz(Hýz sýnýrý=20)");
+                            gezinme_hizi[i]=scanner.nextInt();
+                            scanner.nextLine();
+                        }
+                        }
+                    }
+
+                    }
+                    else if(hareketli[i].equals("Spider")){
+                                            if(gezinme_hizi[i]<0||gezinme_hizi[i]>10){
+                             while(true){
+                                 if(gezinme_hizi[i]>0&&gezinme_hizi[i]<=10) break;
+                                System.out.println("Geçerli gezinme hýzýný giriniz(Hýz sýnýrý=10)");
+                                gezinme_hizi[i]=scanner.nextInt();
+                                scanner.nextLine();
+                              }
+                        }
+
+                    }
+                    if(hareketli[i].equals("Tekerlekli")){
+                        System.out.print("Teker sayisini giriniz:");
+                        hareket_parcasi[i]=scanner.nextInt();
+                        scanner.nextLine();}
+                    else if(hareketli[i].equals("Paletli")){
+                        System.out.print("Palet sayisini giriniz:");
+                        hareket_parcasi[i]=scanner.nextInt();
+                        scanner.nextLine();}
+                    else if(hareketli[i].equals("Spider")){
+                        System.out.print("Bacak sayisini giriniz:");
+                        hareket_parcasi[i]=scanner.nextInt();
+                        scanner.nextLine();
+                    } 
+
+                    }
+                
+                /*else if(gezmeyen>0&&gezgin>0){
+                     int motor_sayisi[]= new int[10];
+        int yuk_miktari[]= new int[10];
+        int gezinme_hizi[]= new int[10];
+        int hareket_parcasi[]= new int[10];
+        int yük_tasýma_kapasitesi[]= new int[10];
+        int kol_uzunlugu[]= new int[10];
+        int tasýma_hizi[]= new int[10];
+                     
+                    
+                    System.out.print("Sabitlenme süresini giriniz:");
+                    sabitlenme_suresi=scanner.nextInt();
+                    System.out.print("Yükü kola geçirme süresini giriniz:");
+                    gecis_suresi=scanner.nextInt();
+                }*/
+                 
+                
+                    else if(gezmeyen==0&&gezgin>0){
+                        
+                    System.out.print("Sabitlenme süresini giriniz:");
+                    sabitlenme_suresi=scanner.nextInt();
+                    System.out.print("Yükü kola geçirme süresini giriniz:");
+                    gecis_suresi=scanner.nextInt();
+                    System.out.print("Kol uzunluðunu giriniz:");
+                    kol_uzunlugu[i]=scanner.nextInt();
+                    System.out.print("Taþýma hýzýný giriniz giriniz:");
+                    tasýma_hizi[i]=scanner.nextInt();
+                    System.out.print("Yük taþýma kapasitesini giriniz:");
+                    yük_tasýma_kapasitesi[i]=scanner.nextInt();
+                    scanner.nextLine();
+                  
+                       if(yuk_miktari[i]>yük_tasýma_kapasitesi[i]){
+                        while(true){
+                           System.out.print("YETERSÝZ KAPASÝTE!!!!!!!!\n"
+                                   + "Yük taþýma kapasitesini giriniz:");
+                            yük_tasýma_kapasitesi[i]=scanner.nextInt();
+                            scanner.nextLine();
+                            if(yuk_miktari[i]<=yük_tasýma_kapasitesi[i]){
+                                break;
+                            }      
+                        }
+                         
+                    
+                   }   
+                    }
+                     else if(gezmeyen>0&&gezgin==0){
+                         
+                        System.out.print("Sabitlenme süresini giriniz:");
+                        sabitlenme_suresi=scanner.nextInt();
+                        System.out.print("Yükü kola geçirme süresini giriniz:");
+                        gecis_suresi=scanner.nextInt();
+                        System.out.print("Gezinme hýzýný giriniz:");
+                        gezinme_hizi[i]=scanner.nextInt();
+                        scanner.nextLine();
+                        if(hareketli[i].equals("Tekerlekli")){
+                                 if(gezinme_hizi[i]<20||gezinme_hizi[i]>30){{
+                                 while(true){
+                                     if(gezinme_hizi[i]>20&&gezinme_hizi[i]<=30)break;  
+                                System.out.println("Geçerli gezinme hýzýný giriniz(Hýz sýnýrý=30)");
+                                gezinme_hizi[i]=scanner.nextInt();
+                                scanner.nextLine();
+                            } 
+
+                            }
+
+                             }
+
+                        else if(hareketli[i].equals("Paletli")){
+                                                if(gezinme_hizi[i]<10||gezinme_hizi[i]>20){
+                                while(true){
+                                if(gezinme_hizi[i]>10&&gezinme_hizi[i]<=20) break;
+                                System.out.println("Geçerli gezinme hýzýný giriniz(Hýz sýnýrý=20)");
+                                gezinme_hizi[i]=scanner.nextInt();
+                                scanner.nextLine();
+                            }
+                            }
+                        }
+
+                        }
+                        else if(hareketli[i].equals("Spider")){
+                            if(gezinme_hizi[i]<0||gezinme_hizi[i]>10){
+                                while(true){
+                                    if(gezinme_hizi[i]>0&&gezinme_hizi[i]<=10) break;
+                                    System.out.println("Geçerli gezinme hýzýný giriniz(Hýz sýnýrý=10)");
+                                    gezinme_hizi[i]=scanner.nextInt();
+                                    scanner.nextLine();
+                                  }
+                            }
+
+                        }
+                   if(hareketli[i].equals("Tekerlekli")){
+                        System.out.print("Teker sayisini giriniz:");
+                        hareket_parcasi[i]=scanner.nextInt();
+                        scanner.nextLine();}
+                    else if(hareketli[i].equals("Paletli")){
+                        System.out.print("Palet sayisini giriniz:");
+                        hareket_parcasi[i]=scanner.nextInt();
+                        scanner.nextLine();}
+                    else if(hareketli[i].equals("Spider")){
+                        System.out.print("Bacak sayisini giriniz:");
+                        hareket_parcasi[i]=scanner.nextInt();
+                        scanner.nextLine();
+                    }
+                
+                    } 
+                
+                
+                
+            }
+            System.out.println("********************************************************************");
+    }
+        
+             
+        System.out.println("Kacýncý robotla islem yapcaksanýz:");
+        secilen_robot=scanner.nextInt();
+        if(!robot_tipi[secilen_robot-1].equals("Hibrit")){
+        robot_tip=robot_tipi[secilen_robot-1];
+        motor_sayi=motor_sayisi[secilen_robot-1];
+        yük_miktar=yuk_miktari[secilen_robot-1];
+        gezinme_hýz=gezinme_hizi[secilen_robot-1];
+        haraket_parca=hareket_parcasi[secilen_robot-1];
+        robot_tür=robot_türü[secilen_robot-1];
+        tasýma_hýz=tasýma_hizi[secilen_robot-1];
+        kol_uzunluk=kol_uzunlugu[secilen_robot-1];
+        yük_tasýma_kapiste=yük_tasýma_kapasitesi[secilen_robot-1];
+            
+        }
+        else{
+            System.out.println("t:"+t+"p"+p+"s:"+s);
+            robot_tip=robot_tipi[secilen_robot-1];
+               robot_tür=hareketli[secilen_robot-1];
+                tasýma_hýz=tasýma_hizi[secilen_robot-1];
+                kol_uzunluk=kol_uzunlugu[secilen_robot-1];
+                yük_tasýma_kapiste=yük_tasýma_kapasitesi[secilen_robot-1];
+            if(gezgin>0){
+                if(hareketli[secilen_robot-1].equals("Tekerlekli")) secilen_robot=t; 
+                else if(hareketli[secilen_robot-1].equals("Paletli")) secilen_robot=p;
+                else if(hareketli[secilen_robot-1].equals("Spider")) secilen_robot=s;
+                
+                motor_sayi=motor_sayisi[secilen_robot];
+                yük_miktar=yuk_miktari[secilen_robot];
+                gezinme_hýz=gezinme_hizi[secilen_robot];
+                haraket_parca=hareket_parcasi[secilen_robot];
+
+
+            }
+            else if(gezmeyen>0){
+                if(hareketsiz[secilen_robot-1].equals("Paralel")&&t!=0) secilen_robot=pl; 
+                if(hareketsiz[secilen_robot-1].equals("Seri")&&p!=0) secilen_robot=se;
+
+                              
+            }
+            else{
+                robot_tür=hareketli[secilen_robot-1];
+                motor_sayi=motor_sayisi[secilen_robot-1];
+                yük_miktar=yuk_miktari[secilen_robot-1];
+                gezinme_hýz=gezinme_hizi[secilen_robot-1];
+                haraket_parca=hareket_parcasi[secilen_robot-1];
+                tasýma_hýz=tasýma_hizi[secilen_robot-1];
+                kol_uzunluk=kol_uzunlugu[secilen_robot-1];
+                yük_tasýma_kapiste=yük_tasýma_kapasitesi[secilen_robot-1];
+            }
+           
+              
+        
+            
+            
+            
+            
+        }
+      
+             }   
+    
+     public final int hýzKotnrol(int h1,int h2){
+          Scanner scanner = new Scanner(System.in);
+                    while(h1<=h2){
+                        System.out.print("Geçerli gezinme hýzý giriniz:");
+                        g_hýz=scanner.nextInt();
+                        scanner.nextLine();
+                        if(g_hýz>h2){
+                            break;
+                        }
+                    }        
+                     return g_hýz;
+    }
+           
+       public static int hýzKotnrol2(int h1,int h2){
+          Scanner scanner = new Scanner(System.in);
+                    while(h1<=h2){
+                        System.out.print("Geçerli gezinme hýzý giriniz:");
+                        g_hýz=scanner.nextInt();
+                        scanner.nextLine();
+                        if(g_hýz<h1){
+                            break;
+                        }
+                    }              
+                    return g_hýz;
+    }
+       public static int yukKontrol(int a1,int a2){
+            Scanner scanner = new Scanner(System.in);
+             while(a1<=a2){
+                        System.out.print("Geçerli kapasiteyi giriniz:");
+                        g_hýz=scanner.nextInt();
+                        scanner.nextLine();
+                        if(g_hýz>a2){
+                            break;
+                        }
+                    }              
+                    return g_hýz;
+
+           
+       }
+          public static int yukKontrol2(int a1,int a2){
+            Scanner scanner = new Scanner(System.in);
+             while(a1<=a2){
+                        System.out.print("Geçerli kapasiteyi giriniz:");
+                        g_hýz=scanner.nextInt();
+                        scanner.nextLine();
+                        if(g_hýz<a1){
+                            break;
+                        }
+                    }              
+                    return g_hýz;
+
+           
+       }
+}
+
+
+
+
+
+
+
+
+
+
+
+public class SeriRobot extends ManipülatörRobotlar {
+    
+    public SeriRobot(int motor_sayisi, int yük_miktari, String robot_tipi, int yük_taþýma_kapsitesi, int kol_uzunluðu, int yük_taþýma_hýzý) {
+        super(motor_sayisi, yük_miktari, robot_tipi, yük_taþýma_kapsitesi, kol_uzunluðu, yük_taþýma_hýzý);
+    }
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public class SpiderRobot extends GezginRobotlar{
+        private int bacak_sayisi;
+        public SpiderRobot(int motor_sayisi, int yük_miktari, String robot_tipi, int gezinme_hýzý,int bacak_sayisi) {
+            super(motor_sayisi, yük_miktari, robot_tipi, gezinme_hýzý);
+            this.bacak_sayisi=bacak_sayisi;
+        }
+
+        public int getBacak_sayisi() {
+            return bacak_sayisi;
+        }
+
+        public void setBacak_sayisi(int bacak_sayisi) {
+            this.bacak_sayisi = bacak_sayisi;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public class TekerlekliRobot extends GezginRobotlar{
+    
+    private int teker_sayisi;
+
+    public TekerlekliRobot(int motor_sayisi, int yük_miktari, String robot_tipi, int gezinme_hizi,int teker_sayisi) {
+        super(motor_sayisi, yük_miktari, robot_tipi, gezinme_hizi);
+        this.teker_sayisi=teker_sayisi;
+    }
+
+        public int getTeker_sayisi() {
+            return teker_sayisi;
+        }
+
+        public void setTeker_sayisi(int teker_sayisi) {
+            this.teker_sayisi = teker_sayisi;
+        }
+    }
+
+
+
+
+
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.LayoutManager;
+import javax.swing.JPanel;
+
+
+public class grafikekrani extends JPanel {
+    private int x1,y1,x2,y2,engel_s,yuk_x,yuk_y;
+    private int engelx[]=new int[20];
+    private int engely[]=new int[20];
+    public void ilk_konum (int x1,int y1){
+       this.x1=x1;
+       this.y1=y1;
+    }
+    public void son_konum (int x2,int y2){
+       this.x2=x2;
+       this.y2=y2;
+    }
+    public void engel_ekle(int ex[],int ey[],int engel_s){
+        this.engel_s=engel_s;
+        for(int i=0;i<engel_s;i++){
+            this.engelx[i]=ex[i];
+            this.engely[i]=ey[i];
+            }
+        }
+    public void yuk_ekle(int x,int y){
+        this.yuk_x=x;
+        this.yuk_y=y;
+    }
+    @Override
+    public void paint(Graphics g) {
+        super.paint(g); 
+        g.setColor(Color.white);
+        for(int i=0;i<21;i++){
+            for(int j=0;j<21;j++){
+            g.drawRect((i*30),(j*30), 30, 30);
+            }
+        }
+       
+        g.setColor(Color.red);
+        for(int i=0;i<this.engel_s;i++){
+        g.fillRect(30*this.engelx[i],30*this.engely[i], 30,30);
+        }
+         g.setColor(Color.blue);
+        g.fillRect(30*this.x1,30*this.y1, 30,30);
+        g.setColor(Color.GREEN);
+        g.fillRect(30*this.x2,30*this.y2, 30,30);
+        g.setColor(Color.orange);
+        g.fillRect(30*yuk_x,30*yuk_y, 30,30);
+        // BÝLGÝLENDÝRME 
+        g.setColor(Color.white);
+        g.drawString("ÞEKÝL RENKLERÝNÝN ANLAMLARI",690,20);
+        g.drawString("Robot ilk konum(Manipülatör robotlarýn konumu sabittir.)",660,60);
+        g.drawString("Robot son konum",690,100);
+        g.drawString("Engel konumlarý",690,140);
+        g.drawString("Yük son konum",690,180);
+        g.setColor(Color.blue);
+        g.fillRect(650,40, 30,30);
+        g.setColor(Color.GREEN);
+        g.fillRect(650,80, 30,30);
+        g.setColor(Color.red);
+        g.fillRect(650,120, 30,30);
+        g.setColor(Color.orange);
+        g.fillRect(650,160, 30,30);
+        //BÝLGÝLENDÝRME
+        
+    }
+
+    public grafikekrani() {   
+        setBackground(Color.black);
+        x1=-5;
+        y1=-5;
+        x2=-5;
+        y2=-5;
+        yuk_x=-5;
+        yuk_y=-5;
+    }  
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
